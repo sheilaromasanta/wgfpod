@@ -145,10 +145,17 @@
             display: none;
             flex: 1;
             flex-direction: column;
-            background: linear-gradient(180deg, #27382b 0%, #0a0a0a 100%);
+            background: linear-gradient(180deg, #1c3323 0%, #0a0a0a 100%);
             padding: 20px 40px;
             position: relative;
-            overflow-y: auto;
+            overflow: hidden;
+        }
+
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
 
         .back-btn {
@@ -160,8 +167,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
-            width: fit-content;
         }
 
         .back-btn:hover {
@@ -172,60 +177,74 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .mini-art {
-            width: 60px;
-            height: 60px;
+            width: 52px;
+            height: 52px;
             object-fit: cover;
             border-radius: 4px;
             background-color: #282828;
         }
 
-        /* POEM CONTAINER (Lyrics Area) */
-        #letter-container {
-            max-width: 750px;
-            margin: 0 auto;
-            width: 100%;
+        /* SPOTIFY LYRICS SCROLLING CONTAINER */
+        #lyrics-viewport {
             flex: 1;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+            padding: 180px 0;
+            scrollbar-width: none; /* Hide scrollbar for Chrome/Firefox/Safari */
         }
 
-        #typewriter {
-            font-size: 22px;
-            font-weight: 600;
-            line-height: 1.85;
-            color: #a7a7a7;
-            white-space: pre-wrap;
+        #lyrics-viewport::-webkit-scrollbar {
+            display: none;
         }
 
-        .greeting {
-            color: #1db954;
+        #lyrics-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .lyric-line {
             font-size: 28px;
             font-weight: 700;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: color 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+            transform-origin: left center;
+            user-select: none;
         }
 
-        .cursor {
-            animation: blink 0.8s infinite;
+        .lyric-line:hover {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .lyric-line.active {
+            color: #ffffff;
+            transform: scale(1.06);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+        }
+
+        .lyric-line.highlight-title {
             color: #1db954;
+            font-size: 32px;
         }
 
-        @keyframes blink {
-            50% { opacity: 0; }
+        .lyric-line.highlight-title.active {
+            color: #1ed760;
+            text-shadow: 0 0 25px rgba(30, 215, 96, 0.4);
         }
 
-        #endMessage {
-            display: none;
-            margin-top: 40px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: 700;
-            color: #1db954;
-            opacity: 0;
-            transition: opacity 1.5s ease;
+        .spacer-line {
+            height: 20px;
         }
-
-        #endMessage.show { opacity: 1; }
 
         /* BOTTOM PLAYER BAR */
         .bottom-bar {
@@ -290,6 +309,7 @@
             border-radius: 2px;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .progress-fill {
@@ -347,25 +367,25 @@
 
     <!-- PLAYER / LYRICS VIEW -->
     <div id="player-view">
-        <button class="back-btn" onclick="showPlaylist()">
-            <i class="fa-solid fa-chevron-left"></i> Back to Playlist
-        </button>
+        <div class="top-nav">
+            <button class="back-btn" onclick="showPlaylist()">
+                <i class="fa-solid fa-chevron-left"></i> Back to Playlist
+            </button>
+            <span style="color: #b3b3b3; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Lyrics</span>
+            <div></div>
+        </div>
 
         <div class="now-playing-header">
             <img src="photo123.jfif" alt="Summertime Sadness Cover" class="mini-art">
             <div>
-                <h2 style="font-size: 20px;">Summertime Sadness</h2>
-                <p style="color: #b3b3b3; font-size: 14px;">Lana Del Rey</p>
+                <h2 style="font-size: 18px;">Summertime Sadness</h2>
+                <p style="color: #b3b3b3; font-size: 13px;">Lana Del Rey</p>
             </div>
         </div>
 
-        <!-- POEM AREA -->
-        <div id="letter-container">
-            <div id="typewriter"></div>
-
-            <div id="endMessage">
-                Would God Forgive Me If I Only Praise One Deity?
-            </div>
+        <!-- SPOTIFY STYLE SCROLLING LYRICS -->
+        <div id="lyrics-viewport">
+            <div id="lyrics-container"></div>
         </div>
     </div>
 
@@ -388,47 +408,77 @@
             </div>
             <div class="progress-container">
                 <span id="curr-time">0:00</span>
-                <div class="progress-bar">
+                <div class="progress-bar" onclick="seekTrack(event)">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
-                <span>4:25</span>
+                <span id="total-time">4:25</span>
             </div>
         </div>
         <div style="width: 30%;"></div>
     </div>
 
     <script>
-        const letterText = `<span class="greeting">Would God Forgive Me If I Only Praise One Deity?</span>\n
-Would God forgive me if I only praised one deity?
-Will He loathe me, for he is my pride and I honor him so much?
-If putting someone above all else is a sin,
-I would gladly accept being a sinner for him.
-
-Oh Father, if loving him no longer glorifies You,
-Will You be mad at me?
-You taught me how to love a person completely,
-Yet now my devotion has overtaken my faith,
-And I am left wondering if the depth of my affection
-Is a betrayal to Your grace.
-
-If You were to ask me why I praise him like a deity,
-I would tell You that he carries a light
-That softens the hardest parts of this world.
-His strength is quiet, his presence is a sanctuary,
-And in his eyes, I find the comfort I used to seek only in prayer.
-
-Father, how could I not admire someone like him?
-You are the one who created his exceptional soul
-And placed him in my life,
-So would I be forgiven if no one else on earth
-Could ever outweigh him in my eyes?
-
-I never meant to replace You,
-But loving him has become the only way I know how to worship.`;
+        // Array of lines for Spotify-style line-by-line scrolling lyrics
+        const lyricsData = [
+            { text: "Would God Forgive Me If I Only Praise One Deity?", isTitle: true },
+            { text: "Would God forgive me if I only praised one deity?", isTitle: false },
+            { text: "Will He loathe me, for he is my pride and I honor him so much?", isTitle: false },
+            { text: "If putting someone above all else is a sin,", isTitle: false },
+            { text: "I would gladly accept being a sinner for him.", isTitle: false },
+            { text: "", isSpacer: true },
+            { text: "Oh Father, if loving him no longer glorifies You,", isTitle: false },
+            { text: "Will You be mad at me?", isTitle: false },
+            { text: "You taught me how to love a person completely,", isTitle: false },
+            { text: "Yet now my devotion has overtaken my faith,", isTitle: false },
+            { text: "And I am left wondering if the depth of my affection", isTitle: false },
+            { text: "Is a betrayal to Your grace.", isTitle: false },
+            { text: "", isSpacer: true },
+            { text: "If You were to ask me why I praise him like a deity,", isTitle: false },
+            { text: "I would tell You that he carries a light", isTitle: false },
+            { text: "That softens the hardest parts of this world.", isTitle: false },
+            { text: "His strength is quiet, his presence is a sanctuary,", isTitle: false },
+            { text: "And in his eyes, I find the comfort I used to seek only in prayer.", isTitle: false },
+            { text: "", isSpacer: true },
+            { text: "Father, how could I not admire someone like him?", isTitle: false },
+            { text: "You are the one who created his exceptional soul", isTitle: false },
+            { text: "And placed him in my life,", isTitle: false },
+            { text: "So would I be forgiven if no one else on earth", isTitle: false },
+            { text: "Could ever outweigh him in my eyes?", isTitle: false },
+            { text: "", isSpacer: true },
+            { text: "I never meant to replace You,", isTitle: false },
+            { text: "But loving him has become the only way I know how to worship.", isTitle: false },
+            { text: "", isSpacer: true },
+            { text: "So Father, I have to ask:", isTitle: false },
+            { text: "Would I be forgiven if I only praise one deity?", isTitle: true }
+        ];
 
         let isPlaying = false;
-        let typewriterStarted = false;
+        let activeLineIndex = 0;
+        let lyricInterval = null;
         const music = document.getElementById("music");
+        const lyricsContainer = document.getElementById("lyrics-container");
+        const lyricsViewport = document.getElementById("lyrics-viewport");
+
+        // Build Lyric Elements
+        function initLyrics() {
+            lyricsContainer.innerHTML = "";
+            lyricsData.forEach((item, index) => {
+                if (item.isSpacer) {
+                    const spacer = document.createElement("div");
+                    spacer.className = "spacer-line";
+                    lyricsContainer.appendChild(spacer);
+                } else {
+                    const lineDiv = document.createElement("div");
+                    lineDiv.className = `lyric-line ${item.isTitle ? 'highlight-title' : ''}`;
+                    lineDiv.textContent = item.text;
+                    lineDiv.dataset.index = index;
+                    lineDiv.onclick = () => jumpToLine(index);
+                    lyricsContainer.appendChild(lineDiv);
+                }
+            });
+        }
+
+        initLyrics();
 
         function playTrack() {
             document.getElementById("playlist-view").style.display = "none";
@@ -437,12 +487,8 @@ But loving him has become the only way I know how to worship.`;
             music.play().then(() => {
                 isPlaying = true;
                 updatePlayButton();
+                startLyricsAutoScroll();
             }).catch(e => console.log("Playback error:", e));
-
-            if (!typewriterStarted) {
-                typewriterStarted = true;
-                typeWriter();
-            }
         }
 
         function showPlaylist() {
@@ -454,9 +500,11 @@ But loving him has become the only way I know how to worship.`;
             if (isPlaying) {
                 music.pause();
                 isPlaying = false;
+                clearInterval(lyricInterval);
             } else {
                 music.play();
                 isPlaying = true;
+                startLyricsAutoScroll();
             }
             updatePlayButton();
         }
@@ -472,44 +520,56 @@ But loving him has become the only way I know how to worship.`;
             }
         }
 
-        function typeWriter() {
-            const target = document.getElementById("typewriter");
-            const playerView = document.getElementById("player-view");
-            let i = 0;
-
-            function type() {
-                if (i < letterText.length) {
-                    let currentSubstring = letterText.substring(0, i + 1);
-                    
-                    if (letterText[i] === '<') {
-                        i = letterText.indexOf('>', i);
-                        currentSubstring = letterText.substring(0, i + 1);
-                    }
-
-                    let displayedText = currentSubstring.replace(/\n/g, "<br>");
-                    target.innerHTML = displayedText + '<span class="cursor">|</span>';
-                    
-                    playerView.scrollTop = playerView.scrollHeight;
-                    
-                    i++;
-                    setTimeout(type, 30);
-                } else {
-                    target.innerHTML = letterText.replace(/\n/g, "<br>");
-
-                    setTimeout(() => {
-                        const endMessage = document.getElementById("endMessage");
-                        endMessage.style.display = "block";
-                        setTimeout(() => {
-                            endMessage.classList.add("show");
-                            playerView.scrollTop = playerView.scrollHeight;
-                        }, 50);
-                    }, 1000);
-                }
-            }
-
-            type();
+        function jumpToLine(index) {
+            activeLineIndex = index;
+            highlightActiveLine();
         }
 
+        function highlightActiveLine() {
+            const lines = lyricsContainer.querySelectorAll(".lyric-line");
+            lines.forEach(line => {
+                const idx = parseInt(line.dataset.index);
+                if (idx === activeLineIndex) {
+                    line.classList.add("active");
+                    
+                    // Smoothly center the active lyric line in the viewport
+                    const viewportRect = lyricsViewport.getBoundingClientRect();
+                    const lineRect = line.getBoundingClientRect();
+                    const offset = (lineRect.top - viewportRect.top) - (viewportRect.height / 2) + (lineRect.height / 2);
+                    
+                    lyricsViewport.scrollBy({
+                        top: offset,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    line.classList.remove("active");
+                }
+            });
+        }
+
+        function startLyricsAutoScroll() {
+            clearInterval(lyricInterval);
+            highlightActiveLine();
+
+            // Advance line every 4 seconds dynamically (matching standard song pace)
+            lyricInterval = setInterval(() => {
+                if (!isPlaying) return;
+                
+                let nextIndex = activeLineIndex + 1;
+                while (nextIndex < lyricsData.length && lyricsData[nextIndex].isSpacer) {
+                    nextIndex++;
+                }
+
+                if (nextIndex < lyricsData.length) {
+                    activeLineIndex = nextIndex;
+                    highlightActiveLine();
+                } else {
+                    clearInterval(lyricInterval);
+                }
+            }, 4000);
+        }
+
+        // Music Progress updates
         music.addEventListener("timeupdate", () => {
             if (music.duration) {
                 const pct = (music.currentTime / music.duration) * 100;
@@ -521,6 +581,26 @@ But loving him has become the only way I know how to worship.`;
                 document.getElementById("curr-time").textContent = `${mins}:${secs}`;
             }
         });
+
+        function seekTrack(event) {
+            const bar = event.currentTarget;
+            const clickPosition = event.offsetX;
+            const barWidth = bar.clientWidth;
+            if (music.duration) {
+                music.currentTime = (clickPosition / barWidth) * music.duration;
+            }
+        }
     </script>
 </body>
 </html>
+```eof
+
+### Key Changes Made:
+1. **Removed "Sincerely, Shei"**: The ending signature block has been removed.
+2. **Updated Poem Ending**: Appended the final lines:
+   > *So Father, I have to ask:*
+   > *Would I be forgiven if I only praise one deity?*
+3. **Spotify-Style Lyrics Animation**: Replaced the typewriter animation with an authentic **Spotify Lyrics View**:
+   - Lines scroll smoothly upward as time passes or when clicked.
+   - Active line scales up and lights up, while inactive lines remain dimmed in the background.
+   - Clicking any line instantly scrolls to and highlights that line.
