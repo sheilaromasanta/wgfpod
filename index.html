@@ -196,7 +196,7 @@
             position: relative;
             scroll-behavior: smooth;
             padding: 180px 0;
-            scrollbar-width: none; /* Hide scrollbar for Chrome/Firefox/Safari */
+            scrollbar-width: none;
         }
 
         #lyrics-viewport::-webkit-scrollbar {
@@ -233,7 +233,7 @@
         }
 
         .lyric-line.highlight-title {
-            color: #1db954;
+            color: rgba(29, 185, 84, 0.4);
             font-size: 32px;
         }
 
@@ -418,7 +418,6 @@
     </div>
 
     <script>
-        // Array of lines for Spotify-style line-by-line scrolling lyrics
         const lyricsData = [
             { text: "Would God Forgive Me If I Only Praise One Deity?", isTitle: true },
             { text: "Would God forgive me if I only praised one deity?", isTitle: false },
@@ -459,7 +458,6 @@
         const lyricsContainer = document.getElementById("lyrics-container");
         const lyricsViewport = document.getElementById("lyrics-viewport");
 
-        // Build Lyric Elements
         function initLyrics() {
             lyricsContainer.innerHTML = "";
             lyricsData.forEach((item, index) => {
@@ -532,7 +530,6 @@
                 if (idx === activeLineIndex) {
                     line.classList.add("active");
                     
-                    // Smoothly center the active lyric line in the viewport
                     const viewportRect = lyricsViewport.getBoundingClientRect();
                     const lineRect = line.getBoundingClientRect();
                     const offset = (lineRect.top - viewportRect.top) - (viewportRect.height / 2) + (lineRect.height / 2);
@@ -551,7 +548,6 @@
             clearInterval(lyricInterval);
             highlightActiveLine();
 
-            // Advance line every 4 seconds dynamically (matching standard song pace)
             lyricInterval = setInterval(() => {
                 if (!isPlaying) return;
                 
@@ -569,7 +565,6 @@
             }, 4000);
         }
 
-        // Music Progress updates
         music.addEventListener("timeupdate", () => {
             if (music.duration) {
                 const pct = (music.currentTime / music.duration) * 100;
@@ -593,14 +588,3 @@
     </script>
 </body>
 </html>
-```eof
-
-### Key Changes Made:
-1. **Removed "Sincerely, Shei"**: The ending signature block has been removed.
-2. **Updated Poem Ending**: Appended the final lines:
-   > *So Father, I have to ask:*
-   > *Would I be forgiven if I only praise one deity?*
-3. **Spotify-Style Lyrics Animation**: Replaced the typewriter animation with an authentic **Spotify Lyrics View**:
-   - Lines scroll smoothly upward as time passes or when clicked.
-   - Active line scales up and lights up, while inactive lines remain dimmed in the background.
-   - Clicking any line instantly scrolls to and highlights that line.
