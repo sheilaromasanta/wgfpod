@@ -214,22 +214,13 @@
             50% { opacity: 0; }
         }
 
-        #signature, #endMessage {
+        #endMessage {
             display: none;
             margin-top: 40px;
-        }
-
-        #signature {
-            text-align: right;
-            font-size: 20px;
-            color: #1db954;
-        }
-
-        #endMessage {
             text-align: center;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            color: #fff;
+            color: #1db954;
             opacity: 0;
             transition: opacity 1.5s ease;
         }
@@ -372,13 +363,8 @@
         <div id="letter-container">
             <div id="typewriter"></div>
 
-            <div id="signature">
-                <p>Sincerely,</p>
-                <strong>Shei</strong>
-            </div>
-
             <div id="endMessage">
-                See you when I see you.
+                Would God Forgive Me If I Only Praise One Deity?
             </div>
         </div>
     </div>
@@ -438,10 +424,7 @@ So would I be forgiven if no one else on earth
 Could ever outweigh him in my eyes?
 
 I never meant to replace You,
-But loving him has become the only way I know how to worship.
-
-So Father, I have to ask:
-Would I be forgiven if I only praise one deity?`;
+But loving him has become the only way I know how to worship.`;
 
         let isPlaying = false;
         let typewriterStarted = false;
@@ -513,10 +496,6 @@ Would I be forgiven if I only praise one deity?`;
                 } else {
                     target.innerHTML = letterText.replace(/\n/g, "<br>");
 
-                    const signature = document.getElementById("signature");
-                    signature.style.display = "block";
-                    playerView.scrollTop = playerView.scrollHeight;
-
                     setTimeout(() => {
                         const endMessage = document.getElementById("endMessage");
                         endMessage.style.display = "block";
@@ -524,7 +503,7 @@ Would I be forgiven if I only praise one deity?`;
                             endMessage.classList.add("show");
                             playerView.scrollTop = playerView.scrollHeight;
                         }, 50);
-                    }, 1500);
+                    }, 1000);
                 }
             }
 
