@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify - Would God Forgive Me If I Only Praise One Deity?</title>
+    <!-- Font & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- PLAYLIST VIEW --- */
+        #playlist-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #3a5a40 0%, #121212 40%);
+            overflow-y: auto;
+            padding: 30px;
+            transition: opacity 0.5s ease;
+        }
+
+        .header {
+            display: flex;
+            align-items: flex-end;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .cover-art {
+            width: 190px;
+            height: 190px;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            background-color: #282828;
+        }
+
+        .playlist-info h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .playlist-info h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .playlist-info p {
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .play-btn {
+            width: 56px;
+            height: 56px;
+            background-color: #1db954;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 22px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            background-color: #1ed760;
+        }
+
+        .track-list {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .track-list th {
+            text-align: left;
+            color: #b3b3b3;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .track-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+        }
+
+        .track-row:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .track-row td {
+            padding: 12px 10px;
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+
+        .track-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .track-artist {
+            font-size: 13px;
+            color: #b3b3b3;
+        }
+
+        /* --- PLAYER / LYRICS VIEW --- */
+        #player-view {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            background: linear-gradient(180deg, #27382b 0%, #0a0a0a 100%);
+            padding: 20px 40px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .now-playing-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .mini-art {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            background-color: #282828;
+        }
+
+        /* POEM CONTAINER (Lyrics Area) */
+        #letter-container {
+            max-width: 750px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        #typewriter {
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.85;
+            color: #a7a7a7;
+            white-space: pre-wrap;
+        }
+
+        .greeting {
+            color: #1db954;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .cursor {
+            animation: blink 0.8s infinite;
+            color: #1db954;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        #signature, #endMessage {
+            display: none;
+            margin-top: 40px;
+        }
+
+        #signature {
+            text-align: right;
+            font-size: 20px;
+            color: #1db954;
+        }
+
+        #endMessage {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        #endMessage.show { opacity: 1; }
+
+        /* BOTTOM PLAYER BAR */
+        .bottom-bar {
+            height: 80px;
+            background-color: #000000;
+            border-top: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+        }
+
+        .bar-track-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 30%;
+        }
+
+        .bar-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 40%;
+        }
+
+        .bar-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #b3b3b3;
+        }
+
+        .bar-buttons i {
+            cursor: pointer;
+        }
+
+        .bar-buttons i:hover {
+            color: #fff;
+        }
+
+        .play-pause-bar {
+            font-size: 28px;
+            color: #fff;
+        }
+
+        .progress-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #b3b3b3;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #4f4f4f;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #1db954;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="music" loop>
+        <source src="summer.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- PLAYLIST VIEW -->
+    <div id="playlist-view">
+        <div class="header">
+            <img src="photo123.jfif" alt="Playlist Cover" class="cover-art">
+            <div class="playlist-info">
+                <h4>Public Playlist</h4>
+                <h1>Would God Forgive Me If I Only Praise One Deity?</h1>
+                <p>Created by Shei • 1 song</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="play-btn" onclick="playTrack()">
+                <i class="fa-solid fa-play" style="margin-left: 3px;"></i>
+            </div>
+        </div>
+
+        <table class="track-list">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Title</th>
+                    <th>Album</th>
+                    <th><i class="fa-regular fa-clock"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="track-row" onclick="playTrack()">
+                    <td>1</td>
+                    <td>
+                        <div class="track-title">Summertime Sadness</div>
+                        <div class="track-artist">Lana Del Rey</div>
+                    </td>
+                    <td>Would God Forgive Me If I Only Praise One Deity?</td>
+                    <td>4:25</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PLAYER / LYRICS VIEW -->
+    <div id="player-view">
+        <button class="back-btn" onclick="showPlaylist()">
+            <i class="fa-solid fa-chevron-left"></i> Back to Playlist
+        </button>
+
+        <div class="now-playing-header">
+            <img src="photo123.jfif" alt="Summertime Sadness Cover" class="mini-art">
+            <div>
+                <h2 style="font-size: 20px;">Summertime Sadness</h2>
+                <p style="color: #b3b3b3; font-size: 14px;">Lana Del Rey</p>
+            </div>
+        </div>
+
+        <!-- POEM AREA -->
+        <div id="letter-container">
+            <div id="typewriter"></div>
+
+            <div id="signature">
+                <p>Sincerely,</p>
+                <strong>Shei</strong>
+            </div>
+
+            <div id="endMessage">
+                See you when I see you.
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM CONTROL BAR -->
+    <div class="bottom-bar">
+        <div class="bar-track-info">
+            <img src="photo123.jfif" alt="Summertime Sadness Cover" style="width: 42px; height: 42px; border-radius: 4px; object-fit: cover; background-color: #282828;">
+            <div>
+                <div style="font-size: 14px; font-weight: 600;" id="bar-title">Summertime Sadness</div>
+                <div style="font-size: 12px; color: #b3b3b3;" id="bar-artist">Lana Del Rey</div>
+            </div>
+        </div>
+        <div class="bar-controls">
+            <div class="bar-buttons">
+                <i class="fa-solid fa-shuffle"></i>
+                <i class="fa-solid fa-backward-step"></i>
+                <i class="fa-solid fa-circle-play play-pause-bar" id="master-play" onclick="togglePlay()"></i>
+                <i class="fa-solid fa-forward-step"></i>
+                <i class="fa-solid fa-repeat"></i>
+            </div>
+            <div class="progress-container">
+                <span id="curr-time">0:00</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span>4:25</span>
+            </div>
+        </div>
+        <div style="width: 30%;"></div>
+    </div>
+
+    <script>
+        const letterText = `<span class="greeting">Would God Forgive Me If I Only Praise One Deity?</span>\n
+Would God forgive me if I only praised one deity?
+Will He loathe me, for he is my pride and I honor him so much?
+If putting someone above all else is a sin,
+I would gladly accept being a sinner for him.
+
+Oh Father, if loving him no longer glorifies You,
+Will You be mad at me?
+You taught me how to love a person completely,
+Yet now my devotion has overtaken my faith,
+And I am left wondering if the depth of my affection
+Is a betrayal to Your grace.
+
+If You were to ask me why I praise him like a deity,
+I would tell You that he carries a light
+That softens the hardest parts of this world.
+His strength is quiet, his presence is a sanctuary,
+And in his eyes, I find the comfort I used to seek only in prayer.
+
+Father, how could I not admire someone like him?
+You are the one who created his exceptional soul
+And placed him in my life,
+So would I be forgiven if no one else on earth
+Could ever outweigh him in my eyes?
+
+I never meant to replace You,
+But loving him has become the only way I know how to worship.
+
+So Father, I have to ask:
+Would I be forgiven if I only praise one deity?`;
+
+        let isPlaying = false;
+        let typewriterStarted = false;
+        const music = document.getElementById("music");
+
+        function playTrack() {
+            document.getElementById("playlist-view").style.display = "none";
+            document.getElementById("player-view").style.display = "flex";
+            
+            music.play().then(() => {
+                isPlaying = true;
+                updatePlayButton();
+            }).catch(e => console.log("Playback error:", e));
+
+            if (!typewriterStarted) {
+                typewriterStarted = true;
+                typeWriter();
+            }
+        }
+
+        function showPlaylist() {
+            document.getElementById("player-view").style.display = "none";
+            document.getElementById("playlist-view").style.display = "flex";
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                music.pause();
+                isPlaying = false;
+            } else {
+                music.play();
+                isPlaying = true;
+            }
+            updatePlayButton();
+        }
+
+        function updatePlayButton() {
+            const btn = document.getElementById("master-play");
+            if (isPlaying) {
+                btn.classList.remove("fa-circle-play");
+                btn.classList.add("fa-circle-pause");
+            } else {
+                btn.classList.remove("fa-circle-pause");
+                btn.classList.add("fa-circle-play");
+            }
+        }
+
+        function typeWriter() {
+            const target = document.getElementById("typewriter");
+            const playerView = document.getElementById("player-view");
+            let i = 0;
+
+            function type() {
+                if (i < letterText.length) {
+                    let currentSubstring = letterText.substring(0, i + 1);
+                    
+                    if (letterText[i] === '<') {
+                        i = letterText.indexOf('>', i);
+                        currentSubstring = letterText.substring(0, i + 1);
+                    }
+
+                    let displayedText = currentSubstring.replace(/\n/g, "<br>");
+                    target.innerHTML = displayedText + '<span class="cursor">|</span>';
+                    
+                    playerView.scrollTop = playerView.scrollHeight;
+                    
+                    i++;
+                    setTimeout(type, 30);
+                } else {
+                    target.innerHTML = letterText.replace(/\n/g, "<br>");
+
+                    const signature = document.getElementById("signature");
+                    signature.style.display = "block";
+                    playerView.scrollTop = playerView.scrollHeight;
+
+                    setTimeout(() => {
+                        const endMessage = document.getElementById("endMessage");
+                        endMessage.style.display = "block";
+                        setTimeout(() => {
+                            endMessage.classList.add("show");
+                            playerView.scrollTop = playerView.scrollHeight;
+                        }, 50);
+                    }, 1500);
+                }
+            }
+
+            type();
+        }
+
+        music.addEventListener("timeupdate", () => {
+            if (music.duration) {
+                const pct = (music.currentTime / music.duration) * 100;
+                document.getElementById("progress-fill").style.width = pct + "%";
+                
+                let mins = Math.floor(music.currentTime / 60);
+                let secs = Math.floor(music.currentTime % 60);
+                if (secs < 10) secs = "0" + secs;
+                document.getElementById("curr-time").textContent = `${mins}:${secs}`;
+            }
+        });
+    </script>
+</body>
+</html>
