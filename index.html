@@ -29,7 +29,7 @@
             overflow: hidden;
         }
 
-        /* --- PLAYLIST VIEW --- */
+       
         #playlist-view {
             flex: 1;
             display: flex;
@@ -143,7 +143,7 @@
             color: #b3b3b3;
         }
 
-        /* --- PLAYER / LYRICS VIEW --- */
+      
         #player-view {
             display: none;
             flex: 1;
@@ -193,7 +193,7 @@
             flex-shrink: 0;
         }
 
-        /* SPOTIFY LYRICS SCROLLING CONTAINER */
+       
         #lyrics-viewport {
             flex: 1;
             overflow-y: auto;
@@ -250,7 +250,7 @@
             height: 20px;
         }
 
-        /* BOTTOM PLAYER BAR */
+        
         .bottom-bar {
             height: 80px;
             background-color: #000000;
@@ -322,7 +322,7 @@
             background-color: #1db954;
         }
 
-        /* --- RESPONSIVE MOBILE STYLES --- */
+        
         @media (max-width: 768px) {
             #playlist-view {
                 padding: 20px 16px;
@@ -351,7 +351,7 @@
                 margin-bottom: 15px;
             }
 
-            /* Hide extra columns on mobile for a clean Spotify app look */
+            
             .track-list th:nth-child(3),
             .track-row td:nth-child(3) {
                 display: none;
@@ -378,7 +378,7 @@
                 font-size: 22px;
             }
 
-            /* Bottom Bar Mobile Layout */
+           
             .bottom-bar {
                 height: auto;
                 padding: 12px 15px;
@@ -415,7 +415,7 @@
         <source src="summer.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- PLAYLIST VIEW -->
+    
     <div id="playlist-view">
         <div class="header">
             <img src="photo123.jfif" alt="Playlist Cover" class="cover-art">
@@ -455,7 +455,7 @@
         </table>
     </div>
 
-    <!-- PLAYER / LYRICS VIEW -->
+    
     <div id="player-view">
         <div class="top-nav">
             <button class="back-btn" onclick="showPlaylist()">
@@ -473,13 +473,13 @@
             </div>
         </div>
 
-        <!-- SPOTIFY STYLE SCROLLING LYRICS -->
+        
         <div id="lyrics-viewport">
             <div id="lyrics-container"></div>
         </div>
     </div>
 
-    <!-- BOTTOM CONTROL BAR -->
+    
     <div class="bottom-bar">
         <div class="bar-track-info">
             <img src="photo123.jfif" alt="Summertime Sadness Cover" style="width: 42px; height: 42px; border-radius: 4px; object-fit: cover; background-color: #282828; flex-shrink: 0;">
