@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spotify - Would God Forgive Me If I Only Praise One Deity?</title>
     <!-- Font & FontAwesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +15,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -22,6 +23,7 @@
             background-color: #121212;
             color: #ffffff;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile browsers */
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -52,6 +54,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border-radius: 8px;
             background-color: #282828;
+            flex-shrink: 0;
         }
 
         .playlist-info h4 {
@@ -187,6 +190,7 @@
             object-fit: cover;
             border-radius: 4px;
             background-color: #282828;
+            flex-shrink: 0;
         }
 
         /* SPOTIFY LYRICS SCROLLING CONTAINER */
@@ -317,6 +321,92 @@
             height: 100%;
             background-color: #1db954;
         }
+
+        /* --- RESPONSIVE MOBILE STYLES --- */
+        @media (max-width: 768px) {
+            #playlist-view {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .cover-art {
+                width: 160px;
+                height: 160px;
+            }
+
+            .playlist-info h1 {
+                font-size: 22px;
+                margin-bottom: 8px;
+            }
+
+            .controls {
+                justify-content: center;
+                margin-bottom: 15px;
+            }
+
+            /* Hide extra columns on mobile for a clean Spotify app look */
+            .track-list th:nth-child(3),
+            .track-row td:nth-child(3) {
+                display: none;
+            }
+
+            #player-view {
+                padding: 15px 20px;
+            }
+
+            .now-playing-header h2 {
+                font-size: 16px !important;
+            }
+
+            #lyrics-viewport {
+                padding: 120px 0;
+            }
+
+            .lyric-line {
+                font-size: 20px;
+                line-height: 1.35;
+            }
+
+            .lyric-line.highlight-title {
+                font-size: 22px;
+            }
+
+            /* Bottom Bar Mobile Layout */
+            .bottom-bar {
+                height: auto;
+                padding: 12px 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .bar-track-info {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .bar-controls {
+                width: 100%;
+            }
+
+            .bar-buttons {
+                gap: 25px;
+            }
+
+            .progress-container {
+                font-size: 11px;
+            }
+
+            .bottom-bar > div:last-child {
+                display: none; /* remove spacer div on mobile */
+            }
+        }
     </style>
 </head>
 <body>
@@ -345,10 +435,10 @@
         <table class="track-list">
             <thead>
                 <tr>
-                    <th style="width: 50px;">#</th>
+                    <th style="width: 35px;">#</th>
                     <th>Title</th>
                     <th>Album</th>
-                    <th><i class="fa-regular fa-clock"></i></th>
+                    <th style="text-align: right;"><i class="fa-regular fa-clock"></i></th>
                 </tr>
             </thead>
             <tbody>
@@ -359,7 +449,7 @@
                         <div class="track-artist">Lana Del Rey</div>
                     </td>
                     <td>Would God Forgive Me If I Only Praise One Deity?</td>
-                    <td>4:25</td>
+                    <td style="text-align: right;">4:25</td>
                 </tr>
             </tbody>
         </table>
@@ -369,10 +459,10 @@
     <div id="player-view">
         <div class="top-nav">
             <button class="back-btn" onclick="showPlaylist()">
-                <i class="fa-solid fa-chevron-left"></i> Back to Playlist
+                <i class="fa-solid fa-chevron-left"></i> Back
             </button>
             <span style="color: #b3b3b3; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Lyrics</span>
-            <div></div>
+            <div style="width: 45px;"></div>
         </div>
 
         <div class="now-playing-header">
@@ -392,7 +482,7 @@
     <!-- BOTTOM CONTROL BAR -->
     <div class="bottom-bar">
         <div class="bar-track-info">
-            <img src="photo123.jfif" alt="Summertime Sadness Cover" style="width: 42px; height: 42px; border-radius: 4px; object-fit: cover; background-color: #282828;">
+            <img src="photo123.jfif" alt="Summertime Sadness Cover" style="width: 42px; height: 42px; border-radius: 4px; object-fit: cover; background-color: #282828; flex-shrink: 0;">
             <div>
                 <div style="font-size: 14px; font-weight: 600;" id="bar-title">Summertime Sadness</div>
                 <div style="font-size: 12px; color: #b3b3b3;" id="bar-artist">Lana Del Rey</div>
